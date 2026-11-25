@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#04070d">
+<title>Mars Jarvis · Phase 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;800&family=Rajdhani:wght@500;600&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+:root{--c:#38e8ff;--m:#ff6b3d;--g:#3dffa8;--y:#ffd24a;--tx:#d6f4ff;--mu:#7fa3b5;--gl:rgba(14,28,44,.55);--bd:rgba(56,232,255,.22);--k:#4b6a7c}
+body[data-s=listening]{--k:var(--c)}body[data-s=wake]{--k:var(--y)}body[data-s=speaking]{--k:var(--m)}body[data-s=muted]{--k:#ff3d5a}
+*{box-sizing:border-box;margin:0}
+body{min-height:100vh;color:var(--tx);font:500 17px Rajdhani,'Segoe UI',system-ui,sans-serif;background:radial-gradient(circle at 15% 0,#0b2e45,transparent 45%),radial-gradient(circle at 90% 100%,#3b1208,transparent 40%),#04070d;overflow-x:hidden}
+body::before,body::after{content:"";position:fixed;pointer-events:none}
+body::before{inset:0;background:linear-gradient(rgba(56,232,255,.05) 1px,transparent 1px) 0 0/100% 42px,linear-gradient(90deg,rgba(56,232,255,.05) 1px,transparent 1px) 0 0/42px 100%;-webkit-mask:radial-gradient(circle,#000 25%,transparent 80%);mask:radial-gradient(circle,#000 25%,transparent 80%)}
+body::after{left:0;right:0;top:-120px;height:120px;background:linear-gradient(transparent,rgba(56,232,255,.08),transparent);animation:scan 8s linear infinite}
+@keyframes scan{to{transform:translateY(calc(100vh + 240px))}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{50%{transform:scale(1.15);opacity:.8}}
+h1,h2,h3,h4,.brand,.nb,.btn,.pill,.tab,.tag,.stat b{font-family:Orbitron,Rajdhani,sans-serif}
+[hidden]{display:none!important}
+:focus-visible{outline:2px solid var(--y);outline-offset:2px}
+.glass{position:relative;background:var(--gl);-webkit-backdrop-filter:blur(16px) saturate(150%);backdrop-filter:blur(16px) saturate(150%);border:1px solid var(--bd);border-radius:16px;box-shadow:0 8px 32px #0008,inset 0 0 28px rgba(56,232,255,.05)}
+.glass::before,.glass::after{content:"";position:absolute;width:16px;height:16px;border:2px solid var(--c);opacity:.75;pointer-events:none}
+.glass::before{top:-1px;left:-1px;border-right:0;border-bottom:0;border-radius:16px 0 0 0}
+.glass::after{right:-1px;bottom:-1px;border-left:0;border-top:0;border-radius:0 0 16px 0}
+.p{padding:18px}
+#app{display:grid;grid-template-columns:230px 1fr;min-height:100vh;position:relative;z-index:1}
+nav{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:6px;padding:20px 14px;background:rgba(5,12,22,.65);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-right:1px solid var(--bd)}
+.brand{font-weight:800;letter-spacing:.18em;font-size:19px;margin:4px 8px 22px;line-height:1.3}
+.brand em{display:block;font-style:normal;color:var(--m);text-shadow:0 0 14px var(--m)}
+.brand small{letter-spacing:.1em}
+.nb{display:flex;gap:12px;align-items:center;padding:12px 14px;border:1px solid transparent;border-radius:12px;background:none;color:var(--mu);font-size:13px;letter-spacing:.06em;cursor:pointer;transition:.25s}
+.nb b{font-size:18px;width:22px;text-align:center}
+.nb:hover,.nb.on{color:var(--c);background:rgba(56,232,255,.08);border-color:var(--bd);box-shadow:0 0 18px rgba(56,232,255,.18)}
+.me{margin-top:auto;display:flex;gap:10px;align-items:center;font-size:15px;color:var(--mu)}
+.me img{width:34px;height:34px;border-radius:50%;border:1px solid var(--c)}
+main{padding:max(24px,env(safe-area-inset-top)) clamp(14px,3vw,36px) 40px;min-width:0}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:22px}
+h1{font-size:22px;letter-spacing:.14em;flex:1;color:var(--c);text-shadow:0 0 18px var(--c)}
+.pill{display:flex;align-items:center;gap:8px;padding:6px 14px;border:1px solid var(--bd);border-radius:99px;font-size:11px;letter-spacing:.06em;background:var(--gl)}
+.pill s{width:8px;height:8px;border-radius:50%;background:var(--k);box-shadow:0 0 10px var(--k)}
+.orb{position:relative;width:190px;height:190px;margin:auto;display:grid;place-items:center;flex:none}
+.orb i{position:absolute;inset:0;border-radius:50%;border:2px dashed var(--k);opacity:.55;animation:spin 16s linear infinite}
+.orb i:nth-child(2){inset:8%;border:3px solid transparent;border-top-color:var(--k);border-bottom-color:var(--k);animation-duration:6s;animation-direction:reverse;opacity:.9}
+.orb i:nth-child(3){inset:19%;border:1px dotted var(--k);animation-duration:22s}
+.orb b{width:34%;height:34%;border-radius:50%;background:radial-gradient(circle,#fff,var(--k) 40%,transparent 72%);box-shadow:0 0 40px var(--k),0 0 90px var(--k);animation:pulse 3s ease-in-out infinite}
+body[data-s=off] .orb b,body[data-s=muted] .orb b{animation:none;opacity:.4}
+body[data-s=wake] .orb b,body[data-s=speaking] .orb b{animation-duration:.8s}
+.btn{padding:11px 20px;border-radius:10px;border:1px solid var(--c);background:linear-gradient(135deg,rgba(56,232,255,.25),rgba(56,232,255,.06));color:var(--c);font-size:12px;letter-spacing:.06em;cursor:pointer;transition:.25s}
+.btn:hover{box-shadow:0 0 22px rgba(56,232,255,.45)}
+.btn.ghost{background:none;border-color:var(--bd);color:var(--tx)}
+.btn.sm{padding:6px 12px;font-size:10px}
+#bPtt{touch-action:none;user-select:none;-webkit-user-select:none}
+body[data-s=wake] #bPtt{background:var(--y);color:#000;border-color:var(--y)}
+input,textarea,select{width:100%;padding:12px 14px;margin:6px 0;border-radius:10px;border:1px solid var(--bd);background:rgba(2,8,16,.6);color:var(--tx);font:inherit;outline:0}
+input:focus,textarea:focus,select:focus{border-color:var(--c);box-shadow:0 0 14px rgba(56,232,255,.25)}
+textarea{min-height:90px;resize:vertical}
+.chk{display:flex;align-items:center;margin:8px 0}.chk input{width:auto;margin:0 10px 0 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-bottom:16px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:12px}
+.mu,small{color:var(--mu)}
+h3{font-size:13px;letter-spacing:.1em;color:var(--c);margin-bottom:12px}
+h4{margin-bottom:6px;font-size:15px}
+small{font-size:12px}
+.hero{display:flex;gap:26px;align-items:center;padding:26px;margin-bottom:16px;flex-wrap:wrap}
+.hero h2{font-size:clamp(20px,3vw,30px);margin-bottom:8px}
+.stat{padding:16px}.stat b{display:block;font-size:28px;font-weight:800;color:var(--c);margin-top:6px;text-shadow:0 0 14px var(--c)}
+.li{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(56,232,255,.08)}
+.high{--t:#ff4d6d}.medium{--t:var(--y)}.low{--t:var(--g)}
+.pr{width:9px;height:9px;border-radius:50%;background:var(--t);box-shadow:0 0 8px var(--t);flex:none}
+.tag{border:1px solid var(--t);color:var(--t);background:none;border-radius:99px;padding:3px 10px;font-size:10px;cursor:pointer}
+.task{display:flex;align-items:center;gap:12px;padding:12px 14px;margin-bottom:10px}.task span{flex:1;word-break:break-word}
+.task.done span{text-decoration:line-through;opacity:.45}
+.ck{width:26px;height:26px;border-radius:7px;border:1px solid var(--c);background:none;color:var(--g);cursor:pointer;flex:none}
+.x{background:none;border:0;color:var(--mu);cursor:pointer;font-size:16px}.x:hover{color:var(--m)}
+.note p{white-space:pre-wrap;color:var(--mu);margin-bottom:8px;word-break:break-word}
+.vc{text-align:center;margin-bottom:16px}.vc .row{justify-content:center}
+#interim{min-height:26px;margin:14px 0;font-size:18px}
+.h{padding:8px 0;border-bottom:1px solid rgba(56,232,255,.08)}.h div+div{color:var(--mu)}.h b{color:var(--c);font-size:10px;margin-right:8px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.tab{padding:8px 14px;border-radius:99px;border:1px solid var(--bd);background:none;color:var(--mu);font-size:11px;cursor:pointer}.tab.on{color:var(--c);border-color:var(--c)}
+code{display:block;font:12px ui-monospace,Consolas,monospace;color:var(--mu);word-break:break-all;max-height:110px;overflow:auto}
+#login{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:16px;overflow:auto}
+#login .glass{max-width:440px;width:100%;text-align:center;padding:30px}
+details{text-align:left;margin-top:14px;color:var(--mu);font-size:15px}summary{cursor:pointer;color:var(--c)}ol{padding-left:20px;margin-top:8px}
+#toast{position:fixed;left:50%;bottom:90px;transform:translate(-50%,20px);padding:12px 20px;border-radius:12px;background:#0b1a2b;border:1px solid var(--c);opacity:0;transition:.3s;z-index:99;pointer-events:none;max-width:90vw}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+dialog{margin:auto;width:min(560px,92vw);padding:18px;border:1px solid var(--c);border-radius:16px;background:#071322;color:var(--tx)}
+dialog::backdrop{background:#000a}dialog textarea{min-height:240px;font:13px ui-monospace,Consolas,monospace}
+@media(max-width:780px){#app{display:block}nav{position:fixed;top:auto;bottom:0;left:0;right:0;z-index:30;height:auto;flex-direction:row;justify-content:space-around;padding:6px 6px calc(6px + env(safe-area-inset-bottom));border:0;border-top:1px solid var(--bd)}.brand,.me,.nb span{display:none}.nb{padding:10px 12px}main{padding-bottom:96px}h1{font-size:17px}.hero{justify-content:center;text-align:center}}
+@media(prefers-reduced-motion:reduce){*,::before,::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body data-s="off">
+
+<div id="login"><div class="glass">
+  <div class="orb" style="width:120px;height:120px"><i></i><i></i><i></i><b></b></div>
+  <div class="brand" style="margin:18px 0 6px">MARS<em>JARVIS</em></div>
+  <p class="mu">Phase 1 · Your personal AI operating system. Everything you save lives in your own Google Drive.</p>
+  <input id="cid" placeholder="Google OAuth Client ID" autocomplete="off" spellcheck="false">
+  <button class="btn" id="signin" style="width:100%;margin-top:8px">Sign in with Google</button>
+  <details><summary>How do I get a Client ID?</summary><ol>
+    <li>Open console.cloud.google.com and create a project.</li>
+    <li>Enable the <b>Google Drive API</b>.</li>
+    <li>Set up the OAuth consent screen and add yourself as a test user.</li>
+    <li>Credentials → Create OAuth client ID → Web application.</li>
+    <li>Add this page’s address (for example http://localhost:8000) under Authorized JavaScript origins.</li>
+    <li>Paste the Client ID above.</li></ol></details>
+</div></div>
+
+<div id="app" hidden>
+<nav>
+  <div class="brand">MARS<em>JARVIS</em><small>Phase 1 core</small></div>
+  <button class="nb on" data-v="home"><b>⌂</b><span>Home</span></button>
+  <button class="nb" data-v="notes"><b>✎</b><span>Notes</span></button>
+  <button class="nb" data-v="tasks"><b>☑</b><span>Tasks</span></button>
+  <button class="nb" data-v="memory"><b>◈</b><span>Memory</span></button>
+  <button class="nb" data-v="voice"><b>◉</b><span>Voice</span></button>
+  <button class="nb" data-v="settings"><b>⚙</b><span>Settings</span></button>
+  <div class="me" id="me"></div>
+</nav>
+<main>
+<header>
+  <h1 id="ttl">Home</h1>
+  <div class="pill"><s></s><span id="stxt"></span></div>
+  <div class="pill" id="clk"></div>
+  <div class="pill" id="sync">☁ …</div>
+</header>
+
+<section id="v-home" class="view">
+  <div class="hero glass"><div class="orb"><i></i><i></i><i></i><b></b></div>
+    <div><h2 id="greet"></h2><p class="mu">Say “Jarvis, add note blockchain idea” or open the Voice tab to type a command.</p>
+    <div class="row"><button class="btn" data-act="listen">Listening: OFF</button></div></div></div>
+  <div class="grid" id="stats"></div>
+  <div class="grid">
+    <div class="glass p"><h3>Priority tasks</h3><div id="hTasks"></div></div>
+    <div class="glass p"><h3>Recent notes</h3><div id="hNotes"></div></div>
+    <div class="glass p"><h3>Recent commands</h3><div id="hCmds"></div></div>
+  </div>
+</section>
+
+<section id="v-notes" class="view" hidden>
+  <form id="noteForm" class="glass p" style="margin-bottom:16px">
+    <input id="nTitle" placeholder="Title"><textarea id="nBody" placeholder="Write a note"></textarea>
+    <div class="row"><button class="btn">Save note</button><button type="button" class="btn ghost" id="nCancel" hidden>Cancel edit</button></div>
+  </form>
+  <input id="nSearch" placeholder="Search notes" style="margin-bottom:14px">
+  <div class="grid" id="noteList"></div>
+</section>
+
+<section id="v-tasks" class="view" hidden>
+  <form id="taskForm" class="glass p" style="margin-bottom:16px">
+    <input id="tIn" placeholder="New task">
+    <div class="row"><select id="tPr" style="width:auto"><option>medium</option><option>high</option><option>low</option></select><button class="btn">Add task</button></div>
+  </form>
+  <div id="taskList"></div>
+</section>
+
+<section id="v-memory" class="view" hidden>
+  <div class="glass p" style="margin-bottom:16px"><h3>jarvis_data.json</h3><p class="mu" id="mInfo"></p>
+    <div class="row"><button class="btn" data-act="load">Load from Drive</button><button class="btn ghost" data-act="save">Save now</button></div></div>
+  <div class="tabs" id="mTabs"></div>
+  <div class="grid" id="mList"></div>
+</section>
+
+<section id="v-voice" class="view" hidden>
+  <div class="glass p vc"><div class="orb"><i></i><i></i><i></i><b></b></div>
+    <p id="interim" class="mu"></p>
+    <div class="row"><button class="btn" data-act="listen">Listening: OFF</button><button class="btn ghost" id="bPtt">Hold to talk</button><button class="btn ghost" id="bMute" data-act="mute">Mute</button></div>
+    <form id="cmdForm"><input id="cmdIn" placeholder="Or type a command, like add task call John" autocomplete="off"></form></div>
+  <div class="grid">
+    <div class="glass p"><h3>Command history</h3><div id="hist"></div><div class="row"><button class="btn sm ghost" data-act="clearhist">Clear history</button></div></div>
+    <div class="glass p"><h3>Try saying</h3><p class="mu">“Jarvis, add note blockchain idea”<br>“Jarvis, show notes”<br>“Jarvis, search notes blockchain”<br>“Jarvis, add high priority task call John”<br>“Jarvis, complete task call John”<br>“Jarvis, set priority low for call John”<br>“Jarvis, delete task call John”</p></div>
+  </div>
+</section>
+
+<section id="v-settings" class="view" hidden>
+  <div class="grid"><div class="glass p"><h3>Voice</h3>
+    <label>Wake word<input id="sWake"></label>
+    <label>Voice<select id="sVoice"></select></label>
+    <label>Speed<input id="sRate" type="range" min=".6" max="1.6" step=".1"></label>
+    <label>Pitch<input id="sPitch" type="range" min=".5" max="1.5" step=".1"></label>
+    <label class="chk"><input id="sSpeak" type="checkbox">Spoken responses</label>
+    <label class="chk"><input id="sAuto" type="checkbox">Start listening after sign-in</label>
+    <label>Your name<input id="sName"></label>
+    <div class="row"><button class="btn" data-act="testvoice">Test voice</button></div></div>
+  <div class="glass p"><h3>Google account</h3><p class="mu" id="sAcct"></p><div class="row"><button class="btn ghost" data-act="signout">Sign out</button></div></div></div>
+</section>
+</main>
+</div>
+
+<dialog id="dlg"><h3>Edit record</h3><textarea id="dlgT"></textarea>
+  <div class="row"><button class="btn" data-act="dlgsave">Save</button><button class="btn ghost" data-act="dlgclose">Cancel</button></div></dialog>
+<div id="toast"></div>
+
+<script>
+/* ===== Core helpers ===== */
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-3);
+const ago=t=>new Date(t).toLocaleString([],{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+const SCOPE='https://www.googleapis.com/auth/drive.file openid profile email';
+const D='https://www.googleapis.com/drive/v3/files',U='https://www.googleapis.com/upload/drive/v3/files';
+const EMPTY=()=>({notes:[],tasks:[],research:[],settings:{wakeWord:'jarvis',voice:'',rate:1,pitch:1,speak:true,autoListen:true,name:''},conversations:[]});
+const norm=d=>{const e=EMPTY();return{...e,...d,settings:{...e.settings,...d.settings}}};
+let DB=EMPTY(),fileId=null,token=null,tokExp=0,tc,st=0,Q=Promise.resolve(),lastSync=0,who='',mcol='notes',editing=null,medit=null;
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),3800)}
+const sync=s=>$('#sync').textContent='☁ '+s;
+
+/* ===== Google auth + Drive ===== */
+const auth=()=>new Promise((ok,no)=>{tc.callback=r=>{if(r.error)return no(Error(r.error));token=r.access_token;tokExp=Date.now()+(r.expires_in-60)*1e3;ok(token)};tc.requestAccessToken({prompt:''})});
+async function g(url,o={},retry=1){
+  if(!token||Date.now()>tokExp)await auth();
+  const r=await fetch(url,{...o,headers:{Authorization:'Bearer '+token,...o.headers}});
+  if(r.status===401&&retry){token=null;return g(url,o,0)}
+  if(!r.ok)throw Error('Drive '+r.status+(r.status===403?' – enable the Drive API in your Google Cloud project':''));
+  return r;
+}
+async function push(){
+  sync('saving');const body=JSON.stringify(DB,null,1);
+  try{
+    if(fileId)await g(`${U}/${fileId}?uploadType=media`,{method:'PATCH',headers:{'Content-Type':'application/json'},body});
+    else{const b='mj'+uid(),r=await g(`${U}?uploadType=multipart&fields=id`,{method:'POST',headers:{'Content-Type':'multipart/related; boundary='+b},body:`--${b}\r\nContent-Type: application/json\r\n\r\n${JSON.stringify({name:'jarvis_data.json',mimeType:'application/json'})}\r\n--${b}\r\nContent-Type: application/json\r\n\r\n${body}\r\n--${b}--`});fileId=(await r.json()).id}
+    lastSync=Date.now();sync('synced');
+  }catch(e){sync('error');toast('Save failed: '+e.message)}
+}
+
+/* ===== Memory: load / save / edit / delete ===== */
+const Memory={
+  async load(){
+    sync('loading');
+    const q=encodeURIComponent("name='jarvis_data.json' and trashed=false");
+    const{files}=await(await g(`${D}?q=${q}&fields=files(id)`)).json();
+    if(files[0]){fileId=files[0].id;DB=norm(await(await g(`${D}/${fileId}?alt=media`)).json())}
+    else{fileId=null;DB=norm({});await this.save(true)}
+    lastSync=Date.now();sync('synced');
+  },
+  save(now){clearTimeout(st);const run=()=>{st=0;return Q=Q.then(push)};if(now)return run();sync('pending');st=setTimeout(run,700)},
+  add(c,o){o={id:uid(),created:Date.now(),...o};DB[c].push(o);this.save();return o},
+  edit(c,id,p){const o=DB[c].find(x=>x.id===id);if(o){Object.assign(o,p,{updated:Date.now()});this.save()}return o},
+  remove(c,id){DB[c]=DB[c].filter(x=>x.id!==id);this.save()}
+};
+addEventListener('visibilitychange',()=>{if(document.hidden&&st)Memory.save(true)});
+
+/* ===== Voice: speech output ===== */
+let speaking=false,busy=0,muted=false;
+function say(t){
+  if(!t||muted||!DB.settings.speak||!window.speechSynthesis)return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(t),s=DB.settings,vs=speechSynthesis.getVoices();
+  u.voice=vs.find(v=>v.name===s.voice)||vs.find(v=>/Daniel|UK English Male|en-GB/.test(v.name+v.lang))||null;
+  u.rate=s.rate;u.pitch=s.pitch;
+  u.onstart=()=>{speaking=true;refresh()};
+  u.onend=u.onerror=()=>{speaking=false;busy=Date.now()+600;refresh()};
+  speechSynthesis.speak(u);
+}
+
+/* ===== Voice: wake word, continuous listening, push to talk ===== */
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+let rec=null,listening=false,want=false,ptt=false,awake=0;
+function startRec(){
+  if(!SR)return toast('Speech recognition works in Chrome, Edge and Safari. You can still type commands.');
+  if(rec||muted)return;
+  const r=rec=new SR();r.continuous=true;r.interimResults=true;r.lang='en-US';
+  r.onstart=()=>{listening=true;refresh()};
+  r.onend=()=>{if(rec!==r)return;rec=null;listening=false;refresh();if((want||ptt)&&!muted)setTimeout(startRec,300)};
+  r.onerror=e=>{if(/not-allowed|service-not-allowed/.test(e.error)){want=ptt=false;toast('Microphone access was blocked. Allow it in your browser settings.')}};
+  r.onresult=e=>{for(let i=e.resultIndex;i<e.results.length;i++){const x=e.results[i],t=x[0].transcript.trim();if(!x.isFinal){$('#interim').textContent=t;continue}$('#interim').textContent='';hear(t)}};
+  try{r.start()}catch{}
+}
+function stopRec(){const r=rec;rec=null;listening=false;try{r&&r.abort()}catch{}}
+function hear(raw){
+  if(speaking||Date.now()<busy)return;
+  const w=DB.settings.wakeWord,i=raw.toLowerCase().indexOf(w);
+  if(i>=0){const c=raw.slice(i+w.length).replace(/^[\s,.:!?-]+/,'');if(c)run(c,raw);else{awake=Date.now()+8e3;say('Yes?')}}
+  else if(ptt||Date.now()<awake){awake=0;run(raw,raw)}
+}
+function refresh(){
+  const s=muted?'muted':speaking?'speaking':(ptt||Date.now()<awake)?'wake':listening?'listening':'off';
+  document.body.dataset.s=s;
+  $('#stxt').textContent={off:'Voice offline',listening:'Listening for “'+DB.settings.wakeWord+'”',wake:'Go ahead, I’m listening',speaking:'Speaking',muted:'Muted'}[s];
+  $$('[data-act=listen]').forEach(b=>b.textContent='Listening: '+(want?'ON':'OFF'));
+  $('#bMute').textContent=muted?'Unmute':'Mute';
+}
+
+/* ===== Command engine (register new modules with cmd) ===== */
+const CMDS=[],cmd=(re,f)=>CMDS.push([re,f]);
+const txt=x=>(x.title||'')+' '+(x.body||x.text||'');
+const find=(c,q,p=()=>1)=>DB[c].find(x=>p(x)&&txt(x).toLowerCase().includes(q.toLowerCase().trim()));
+const PR={high:0,medium:1,low:2},sorted=()=>[...DB.tasks].sort((a,b)=>a.done-b.done||PR[a.priority]-PR[b.priority]||a.created-b.created);
+const greet=()=>{const h=new Date().getHours();return h<12?'Good morning':h<18?'Good afternoon':'Good evening'},nm=()=>DB.settings.name||who;
+const plural=(n,w)=>`${n} ${w}${n>1?'s':''}`;
+
+cmd(/^(?:add|save|create|take|new)\s+(?:a\s+)?note[:\s]+(.+)$/i,m=>{const t=m[1];Memory.add('notes',{title:t.slice(0,40),body:t.length>40?t:''});return'I have saved your note.'});
+cmd(/^(?:show|open|list|read)(?:\s+(?:me|my|all))*\s+notes?$/i,()=>{go('notes');const n=DB.notes.length;return n?`You have ${plural(n,'note')}. The latest is ${DB.notes.at(-1).title}.`:'You have no notes yet.'});
+cmd(/^(?:search|find)\s+notes?(?:\s+for)?\s+(.+)$/i,m=>{go('notes');$('#nSearch').value=m[1];return`Showing notes about ${m[1]}.`});
+cmd(/^(?:delete|remove)\s+note\s+(.+)$/i,m=>{const n=find('notes',m[1]);if(!n)return'I couldn’t find that note.';Memory.remove('notes',n.id);return'Note deleted.'});
+cmd(/^(?:add|create|new)\s+(?:a\s+)?(?:(high|medium|low)\s+priority\s+)?task[:\s]+(.+)$/i,m=>{let t=m[2],p=m[1];const x=t.match(/\s*\b(?:with\s+|at\s+|as\s+)?(high|medium|low)\s+priority$/i);if(x){p=p||x[1];t=t.slice(0,x.index)}p=(p||'medium').toLowerCase();Memory.add('tasks',{text:t,priority:p,done:false});return`Task added with ${p} priority.`});
+cmd(/^(?:show|open|list|read)(?:\s+(?:me|my|all))*\s+tasks?$/i,()=>{go('tasks');const o=sorted().filter(t=>!t.done);return o.length?`You have ${plural(o.length,'open task')}. Top priority: ${o[0].text}.`:'You have no open tasks.'});
+cmd(/^(?:complete|finish|mark)(?:\s+task)?\s+(.+?)(?:\s+(?:as\s+)?(?:done|complete|completed))?$/i,m=>{const t=find('tasks',m[1],x=>!x.done);if(!t)return'I couldn’t find that open task.';Memory.edit('tasks',t.id,{done:true});return'Task completed. Well done.'});
+cmd(/^(?:delete|remove)\s+task\s+(.+)$/i,m=>{const t=find('tasks',m[1]);if(!t)return'I couldn’t find that task.';Memory.remove('tasks',t.id);return'Task deleted.'});
+cmd(/^(?:set\s+)?(?:task\s+)?priority\s+(.+)$/i,m=>{const l=m[1].match(/\b(high|medium|low)\b/i);if(!l)return'Please say high, medium or low.';const q=m[1].replace(l[0],' ').trim().replace(/^(?:of|to|for|on|task)\s+/i,'').replace(/\s+(?:of|to|for|on)$/i,''),t=find('tasks',q);if(!t)return'I couldn’t find that task.';Memory.edit('tasks',t.id,{priority:l[1].toLowerCase()});return`Priority set to ${l[1].toLowerCase()}.`});
+cmd(/^(?:go\s+to|open|show)\s+(home|notes|tasks|memory|voice|settings)$/i,m=>{go(m[1].toLowerCase());return`Opening ${m[1]}.`});
+cmd(/^what(?:'s|\s+is)?\s+the\s+time$|^what\s+time\s+is\s+it$/i,()=>'It is '+new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})+'.');
+cmd(/^what(?:'s|\s+is)?\s+(?:the\s+)?date$|^what\s+day\s+is\s+it$/i,()=>'Today is '+new Date().toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'})+'.');
+cmd(/^(?:hello|hi|hey|good\s+(?:morning|afternoon|evening))$/i,()=>`${greet()}${nm()?', '+nm():''}. How can I help?`);
+cmd(/^(?:stop|quiet|silence)$/i,()=>'Okay.');
+
+function run(t,raw){
+  const w=DB.settings.wakeWord;
+  if(t.toLowerCase().startsWith(w))t=t.slice(w.length);
+  t=t.replace(/^[\s,:]+/,'').replace(/[.!?]+$/,'').replace(/^(?:please|hey|ok|okay)\s+/i,'').trim();
+  let r;for(const[re,f]of CMDS){const m=t.match(re);if(m){r=f(m);break}}
+  r=r||'I don’t know that command yet. Try add note, add task, or show tasks.';
+  Memory.add('conversations',{user:raw,jarvis:r});
+  if(DB.conversations.length>200)DB.conversations.splice(0,DB.conversations.length-200);
+  say(r);render();
+}
+
+/* ===== Rendering ===== */
+const hist=n=>DB.conversations.slice(-n).reverse().map(c=>`<div class="h"><small>${ago(c.created)}</small><div><b>YOU</b>${esc(c.user)}</div><div><b>JARVIS</b>${esc(c.jarvis)}</div></div>`).join('')||'<p class="mu">No commands yet. Say “Jarvis” and give a command.</p>';
+function render(){
+  const open=DB.tasks.filter(t=>!t.done),kb=(JSON.stringify(DB).length/1024).toFixed(1);
+  $('#greet').textContent=greet()+(nm()?', '+nm():'')+'.';
+  $('#stats').innerHTML=[['Notes',DB.notes.length],['Open tasks',open.length],['Commands',DB.conversations.length],['Memory',kb+' KB']].map(([k,v])=>`<div class="glass stat"><small>${k}</small><b>${v}</b></div>`).join('');
+  $('#hTasks').innerHTML=sorted().filter(t=>!t.done).slice(0,5).map(t=>`<div class="li ${t.priority}"><i class="pr"></i>${esc(t.text)}</div>`).join('')||'<p class="mu">Nothing pending. Say “Jarvis, add task”.</p>';
+  $('#hNotes').innerHTML=DB.notes.slice(-4).reverse().map(n=>`<div class="li">${esc(n.title)}</div>`).join('')||'<p class="mu">No notes yet. Say “Jarvis, add note”.</p>';
+  $('#hCmds').innerHTML=hist(4);$('#hist').innerHTML=hist(30);
+  const q=$('#nSearch').value.toLowerCase();
+  $('#noteList').innerHTML=DB.notes.filter(n=>txt(n).toLowerCase().includes(q)).reverse().map(n=>`<div class="glass p note"><h4>${esc(n.title)}</h4><p>${esc(n.body)}</p><small>${ago(n.updated||n.created)}</small><div class="row"><button class="btn sm ghost" data-act="enote" data-id="${n.id}">Edit</button><button class="btn sm ghost" data-act="dnote" data-id="${n.id}">Delete</button></div></div>`).join('')||'<p class="mu">No notes found.</p>';
+  $('#taskList').innerHTML=sorted().map(t=>`<div class="glass task ${t.priority} ${t.done?'done':''}"><button class="ck" data-act="tdone" data-id="${t.id}" aria-label="Toggle complete">${t.done?'✔':''}</button><span>${esc(t.text)}</span><button class="tag" data-act="tpri" data-id="${t.id}" title="Change priority">${t.priority}</button><button class="x" data-act="dtask" data-id="${t.id}" aria-label="Delete task">✕</button></div>`).join('')||'<p class="mu">No tasks yet.</p>';
+  $('#mInfo').textContent=`File ${fileId?fileId.slice(0,10)+'…':'not created'} · ${kb} KB · last sync ${lastSync?ago(lastSync):'never'}`;
+  $('#mTabs').innerHTML=['notes','tasks','research','conversations'].map(c=>`<button class="tab ${c===mcol?'on':''}" data-act="mtab" data-id="${c}">${c} (${DB[c].length})</button>`).join('');
+  $('#mList').innerHTML=DB[mcol].slice(-50).reverse().map(r=>`<div class="glass p"><code>${esc(JSON.stringify(r))}</code><div class="row"><button class="btn sm ghost" data-act="medit" data-id="${r.id}">Edit</button><button class="btn sm ghost" data-act="mdel" data-id="${r.id}">Delete</button></div></div>`).join('')||`<p class="mu">${mcol==='research'?'Reserved for the research module in a later phase.':'Nothing stored here yet.'}</p>`;
+}
+const T={home:'Home',notes:'Notes',tasks:'Tasks',memory:'Memory',voice:'Voice console',settings:'Settings'};
+function go(v){$$('.view').forEach(s=>s.hidden=s.id!=='v-'+v);$$('.nb').forEach(b=>b.classList.toggle('on',b.dataset.v===v));$('#ttl').textContent=T[v]}
+function fillSettings(){
+  const s=DB.settings,vs=window.speechSynthesis?speechSynthesis.getVoices():[];
+  $('#sWake').value=s.wakeWord;$('#sRate').value=s.rate;$('#sPitch').value=s.pitch;$('#sSpeak').checked=s.speak;$('#sAuto').checked=s.autoListen;$('#sName').value=s.name||'';
+  $('#sVoice').innerHTML=vs.map(v=>`<option ${v.name===s.voice?'selected':''}>${esc(v.name)}</option>`).join('');
+}
+if(window.speechSynthesis)speechSynthesis.onvoiceschanged=fillSettings;
+$('#v-settings').oninput=()=>{const s=DB.settings;s.wakeWord=($('#sWake').value.trim()||'jarvis').toLowerCase();s.voice=$('#sVoice').value;s.rate=+$('#sRate').value;s.pitch=+$('#sPitch').value;s.speak=$('#sSpeak').checked;s.autoListen=$('#sAuto').checked;s.name=$('#sName').value.trim();Memory.save();refresh();render()};
+
+/* ===== UI actions ===== */
+const A={
+  listen(){want=!want;want?startRec():stopRec();refresh()},
+  mute(){muted=!muted;if(muted){stopRec();speechSynthesis.cancel()}else if(want)startRec();refresh()},
+  load(){Memory.load().then(()=>{render();fillSettings()}).catch(e=>toast(e.message))},
+  save(){Memory.save(true)},
+  enote(id){const n=DB.notes.find(x=>x.id===id);editing=id;$('#nTitle').value=n.title;$('#nBody').value=n.body;$('#nCancel').hidden=false;scrollTo({top:0,behavior:'smooth'})},
+  dnote(id){Memory.remove('notes',id)},
+  tdone(id){Memory.edit('tasks',id,{done:!DB.tasks.find(x=>x.id===id).done})},
+  tpri(id){const t=DB.tasks.find(x=>x.id===id);Memory.edit('tasks',id,{priority:['high','medium','low'][(PR[t.priority]+1)%3]})},
+  dtask(id){Memory.remove('tasks',id)},
+  mtab(id){mcol=id},
+  medit(id){medit=id;$('#dlgT').value=JSON.stringify(DB[mcol].find(x=>x.id===id),null,2);$('#dlg').showModal()},
+  mdel(id){Memory.remove(mcol,id)},
+  dlgsave(){try{Memory.edit(mcol,medit,{...JSON.parse($('#dlgT').value),id:medit});$('#dlg').close()}catch{toast('That isn’t valid JSON. Fix it and save again.')}},
+  dlgclose(){$('#dlg').close()},
+  clearhist(){DB.conversations=[];Memory.save()},
+  testvoice(){say('Mars Jarvis online. All systems nominal.')},
+  signout(){token?google.accounts.oauth2.revoke(token,()=>location.reload()):location.reload()}
+};
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]');if(b){A[b.dataset.act]?.(b.dataset.id);render()}
+  const n=e.target.closest('[data-v]');if(n)go(n.dataset.v);
+});
+$('#noteForm').onsubmit=e=>{e.preventDefault();const title=$('#nTitle').value.trim(),body=$('#nBody').value.trim();if(!title&&!body)return;const d={title:title||body.slice(0,40),body};editing?Memory.edit('notes',editing,d):Memory.add('notes',d);editing=null;e.target.reset();$('#nCancel').hidden=true;render()};
+$('#nCancel').onclick=()=>{editing=null;$('#noteForm').reset();$('#nCancel').hidden=true};
+$('#nSearch').oninput=render;
+$('#taskForm').onsubmit=e=>{e.preventDefault();const t=$('#tIn').value.trim();if(t){Memory.add('tasks',{text:t,priority:$('#tPr').value,done:false});e.target.reset();render()}};
+$('#cmdForm').onsubmit=e=>{e.preventDefault();const v=$('#cmdIn').value.trim();if(v){run(v,v);$('#cmdIn').value=''}};
+const pt=$('#bPtt'),rel=()=>{if(ptt)setTimeout(()=>{ptt=false;if(!want)stopRec();refresh()},1500)};
+pt.onpointerdown=e=>{e.preventDefault();if(muted)return toast('Unmute first.');ptt=true;startRec();refresh()};
+pt.onpointerup=pt.onpointerleave=pt.onpointercancel=rel;pt.oncontextmenu=e=>e.preventDefault();
+
+/* ===== Sign-in and boot ===== */
+const CLIENT_ID='';/* optional: paste your OAuth Client ID here */
+try{$('#cid').value=CLIENT_ID||localStorage.mj_cid||''}catch{$('#cid').value=CLIENT_ID}
+$('#signin').onclick=async()=>{
+  const id=$('#cid').value.trim();
+  if(!id)return toast('Paste your Google OAuth Client ID first.');
+  if(!window.google?.accounts)return toast('Google is still loading. Try again in a moment.');
+  try{localStorage.mj_cid=id}catch{}
+  tc=google.accounts.oauth2.initTokenClient({client_id:id,scope:SCOPE,callback:()=>{},error_callback:()=>toast('Sign-in was cancelled.')});
+  try{await auth();await boot()}catch(e){toast('Sign-in failed: '+e.message)}
+};
+async function boot(){
+  const u=await g('https://www.googleapis.com/oauth2/v3/userinfo').then(r=>r.json()).catch(()=>({}));
+  who=u.given_name||'';
+  await Memory.load();
+  $('#login').hidden=true;$('#app').hidden=false;
+  $('#me').innerHTML=(u.picture?`<img src="${esc(u.picture)}" alt="" referrerpolicy="no-referrer">`:'')+`<span>${esc(u.name||'Operator')}</span>`;
+  $('#sAcct').textContent=u.email?'Signed in as '+u.email:'Signed in';
+  fillSettings();render();go('home');refresh();
+  say(`${greet()}${nm()?', '+nm():''}. Mars Jarvis online.`);
+  if(DB.settings.autoListen){want=true;startRec();refresh()}
+}
+setInterval(()=>{$('#clk').textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});refresh()},1000);
+refresh();
+</script>
+</body>
+</html>
